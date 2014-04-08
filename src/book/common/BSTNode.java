@@ -74,6 +74,10 @@ public class BSTNode {
 		preorder(current.getRight());
 	}
 	
+	public String originalToString() {
+		return super.toString();
+	}
+	
 	public String toString() {
 		return data.toString();
 	}
