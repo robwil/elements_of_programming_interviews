@@ -74,10 +74,40 @@ public class Problem12_07_Anagram_Dictionary {
 		return anagramsList;
 	}
 	
+	// Same as above, but using my own personal HT implementation
+	public static List<List<String>> getAnagramsHT(File inputDictionary) throws IOException {
+		// Read all words from dictionary file into Words array
+		List<String> words = new ArrayList<String>();
+		BufferedReader br = new BufferedReader(new FileReader(inputDictionary));
+		String word;
+		while ((word = br.readLine()) != null) {
+			words.add(word);
+		}
+		br.close();
+		// Find anagrams by hashing each word, from hashCode(word) --> list of words
+		HT anagrams = new HT();
+		for (int i = 0; i < words.size(); i++) {
+			int hashCode = hashWord(words.get(i));
+			if (anagrams.get(hashCode) == null) {
+				anagrams.put(hashCode, new LinkedList<String>());
+			}
+			((LinkedList<String>)anagrams.get(hashCode)).add(words.get(i));
+		}
+		// Convert HT which is a sparse hash table including single non-anagram words,
+		// into a List<List<String>> of all actual anagrams
+		List<List<String>> anagramsList = new LinkedList<List<String>>();
+		for (HTEntry e : anagrams.entrySet()) {
+			if (((List<String>)e.getValue()).size() > 1) // Exclude words which do not have an anagram
+				anagramsList.add((List<String>)e.getValue());
+		}
+		return anagramsList;
+	}
+	
 	public static void main(String[] args) {
 		File dictionary = new File("dictionary.txt");
 		try {
-			List<List<String>> anagrams = getAnagrams(dictionary);
+			//List<List<String>> anagrams = getAnagrams(dictionary);
+			List<List<String>> anagrams = getAnagramsHT(dictionary);
 			System.out.println(anagrams.toString());
 		} catch (IOException e) {
 			System.err.println("IO EXCEPTION ENCOUNTERED!!");
